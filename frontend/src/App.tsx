@@ -73,7 +73,7 @@ export default function App() {
       case "dashboard":
         return (
           <Dashboard
-            onSelectWorkspace={handleSelectQuest}
+            onSelectQuest={handleSelectQuest}
           />
         )
       case "profile":

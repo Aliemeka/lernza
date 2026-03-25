@@ -207,7 +207,7 @@ export function Dashboard({ onSelectQuest }: DashboardProps) {
             <Card
               key={q.id}
               className={`card-tilt cursor-pointer group animate-fade-in-up stagger-${i + 1} border-black border-2`}
-              onClick={() => onSelectWorkspace(q.id)}
+              onClick={() => onSelectQuest(q.id)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
