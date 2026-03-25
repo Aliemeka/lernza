@@ -72,6 +72,8 @@ pnpm dev                    # → localhost:5173
 
 Install [Freighter](https://freighter.app), switch to **Testnet**, and connect.
 
+For contract deployment to Stellar testnet, see [docs/deploy-testnet.md](docs/deploy-testnet.md).
+
 <br />
 
 ## Roadmap
@@ -99,6 +101,8 @@ Three independent Soroban smart contracts orchestrated by the frontend:
 <p align="center">
   <img src=".github/assets/architecture.svg" alt="Lernza architecture" width="100%" />
 </p>
+
+Need the transaction-by-transaction flow? See the [contract interaction diagrams](docs/contract-interaction-diagrams.md) for quest creation, enrollment, funding, and reward distribution sequences rendered with GitHub-native Mermaid.
 
 **Why three contracts?**
 - **Separation of concerns** — each contract has a single responsibility
