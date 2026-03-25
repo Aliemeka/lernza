@@ -4,7 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Navbar } from "@/components/navbar"
 import { Landing } from "@/pages/landing"
 import { Dashboard } from "@/pages/dashboard"
-import { WorkspaceView } from "@/pages/workspace"
+import { QuestView } from "@/pages/quest"
 import { Profile } from "@/pages/profile"
 import { NotFound } from "@/pages/not-found"
 import { ErrorBoundary } from "@/components/error-boundary"
@@ -41,23 +41,25 @@ function getInitialTheme(): Theme {
 // ─── Routing ───────────────────────────────────────────────────────────────────
 
 const VALID_PAGES = ["landing", "dashboard", "profile", "create-quest"] as const
-type Page = (typeof VALID_PAGES)[number] | "workspace" | "404"
+type Page = (typeof VALID_PAGES)[number] | "quest" | "404"
 
-function pathToPage(pathname: string): { page: Page; workspaceId: number | null } {
+function pathToPage(pathname: string): { page: Page; questId: number | null } {
   const clean = pathname.replace(/\/+$/, "") || "/"
-  if (clean === "/") return { page: "landing", workspaceId: null }
-  if (clean === "/dashboard") return { page: "dashboard", workspaceId: null }
-  if (clean === "/profile") return { page: "profile", workspaceId: null }
-  if (clean === "/create-quest") return { page: "create-quest", workspaceId: null }
 
-  const wsMatch = clean.match(/^\/quest\/(\d+)$/)
-  if (wsMatch) return { page: "workspace", workspaceId: Number(wsMatch[1]) }
-  return { page: "404", workspaceId: null }
+  if (clean === "/") return { page: "landing", questId: null }
+  if (clean === "/dashboard") return { page: "dashboard", questId: null }
+  if (clean === "/profile") return { page: "profile", questId: null }
+  if (clean === "/create-quest") return { page: "create-quest", questId: null }
+
+  const questMatch = clean.match(/^\/quest\/(\d+)$/)
+  if (questMatch) return { page: "quest", questId: Number(questMatch[1]) }
+
+  return { page: "404", questId: null }
 }
 
-function pageToPath(page: Page, workspaceId: number | null): string {
+function pageToPath(page: Page, questId: number | null): string {
   if (page === "landing") return "/"
-  if (page === "workspace" && workspaceId !== null) return `/quest/${workspaceId}`
+  if (page === "quest" && questId !== null) return `/quest/${questId}`
   return `/${page}`
 }
 
@@ -78,7 +80,7 @@ function App() {
   }, [theme])
 
   const toggleTheme = useCallback(() => {
-    setTheme((t) => (t === "light" ? "dark" : "light"))
+    setTheme(t => (t === "light" ? "dark" : "light"))
   }, [])
 
   useEffect(() => {
@@ -91,22 +93,20 @@ function App() {
     const page = (VALID_PAGES as readonly string[]).includes(p) ? (p as Page) : "404"
     const path = pageToPath(page, null)
     window.history.pushState(null, "", path)
-    setState({ page, workspaceId: null })
+    setState({ page, questId: null })
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [])
 
-  const handleSelectWorkspace = useCallback((id: number) => {
-    const path = pageToPath("workspace", id)
+  const handleSelectQuest = useCallback((id: number) => {
+    const path = pageToPath("quest", id)
     window.history.pushState(null, "", path)
-    setState({ page: "workspace", workspaceId: id })
+    setState({ page: "quest", questId: id })
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [])
 
   const renderPage = () => {
-    if (state.page === "workspace" && state.workspaceId !== null) {
-      return (
-        <WorkspaceView workspaceId={state.workspaceId} onBack={() => handleNavigate("dashboard")} />
-      )
+    if (state.page === "quest" && state.questId !== null) {
+      return <QuestView questId={state.questId} onBack={() => handleNavigate("dashboard")} />
     }
     switch (state.page) {
       case "landing":
@@ -114,7 +114,7 @@ function App() {
       case "dashboard":
         return (
           <Dashboard
-            onSelectWorkspace={handleSelectWorkspace}
+            onSelectQuest={handleSelectQuest}
             onCreateQuest={() => handleNavigate("create-quest")}
           />
         )
@@ -132,15 +132,21 @@ function App() {
       <ErrorBoundary githubRepo="https://github.com/lernza/lernza">
         <div className="bg-background text-foreground min-h-screen">
           <Navbar activePage={state.page} onNavigate={handleNavigate} />
-          <ErrorBoundary key={`${state.page}-${state.workspaceId ?? ""}`}>
+          <ErrorBoundary key={`${state.page}-${state.questId ?? ""}`}>
             <main>{renderPage()}</main>
           </ErrorBoundary>
           <Analytics />
           <SpeedInsights />
+          <ToastViewport />
         </div>
       </ErrorBoundary>
     </ThemeContext.Provider>
   )
+}
+
+function ToastViewport() {
+  // Simple placeholder for toast viewport if used by upstream additions
+  return <div id="toast-viewport" />
 }
 
 export default App
