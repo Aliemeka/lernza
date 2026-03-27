@@ -185,7 +185,7 @@ export function QuestView() {
       enrolleesData.refetch(),
       poolBalanceData.refetch(),
     ])
-  }, [questData.refetch, milestonesData.refetch, enrolleesData.refetch, poolBalanceData.refetch])
+  }, [questData, milestonesData, enrolleesData, poolBalanceData])
 
   // Get raw data
   const quest = questData.data
@@ -229,16 +229,7 @@ export function QuestView() {
     }
 
     fetchCompletions()
-  }, [
-    questId,
-    milestones,
-    enrollees,
-    milestoneClient,
-    questData,
-    milestonesData,
-    enrolleesData,
-    poolBalanceData,
-  ])
+  }, [questId, milestones, enrollees])
 
   const isOwner = !!address && quest?.owner === address
   const isEnrolled = !!address && enrollees.includes(address)
@@ -361,7 +352,20 @@ export function QuestView() {
             })
 
             await refetch()
-            addToast("Milestone created successfully!", "success")
+            addToast(
+              <div className="flex flex-col gap-1">
+                <span>Milestone created successfully!</span>
+                <a
+                  href={`https://stellar.expert/explorer/testnet/tx/${(createMilestoneTx.data as { txHash?: string })?.txHash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs underline hover:opacity-80"
+                >
+                  View on Stellar Expert
+                </a>
+              </div>,
+              "success"
+            )
             resetMilestoneForm()
           } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Unknown error"
@@ -404,7 +408,20 @@ export function QuestView() {
 
         await refetch()
         setAddPhase("done")
-        addToast("Enrollee added successfully.", "success")
+        addToast(
+          <div className="flex flex-col gap-1">
+            <span>Enrollee added successfully.</span>
+            <a
+              href={`https://stellar.expert/explorer/testnet/tx/${(addEnrolleeTx.data as { txHash?: string })?.txHash}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs underline hover:opacity-80"
+            >
+              View on Stellar Expert
+            </a>
+          </div>,
+          "success"
+        )
         setTimeout(closeAddEnrollee, 1500)
       } catch (err: unknown) {
         setAddPhase("error")
@@ -440,7 +457,20 @@ export function QuestView() {
       })
 
       await refetch()
-      addToast("Enrollment confirmed.", "success")
+      addToast(
+        <div className="flex flex-col gap-1">
+          <span>Enrollment confirmed.</span>
+          <a
+            href={`https://stellar.expert/explorer/testnet/tx/${(enrollTx.data as { txHash?: string })?.txHash}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs underline hover:opacity-80"
+          >
+            View on Stellar Expert
+          </a>
+        </div>,
+        "success"
+      )
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -520,7 +550,20 @@ export function QuestView() {
             })
 
             await refetch()
-            addToast("Completion verified and reward paid out.", "success")
+            addToast(
+              <div className="flex flex-col gap-1">
+                <span>Completion verified and reward paid out.</span>
+                <a
+                  href={`https://stellar.expert/explorer/testnet/tx/${(verifyPayoutTx.data as { txHash?: string })?.txHash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs underline hover:opacity-80"
+                >
+                  View on Stellar Expert
+                </a>
+              </div>,
+              "success"
+            )
           } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Verification failed."
             addToast(message, "error")
